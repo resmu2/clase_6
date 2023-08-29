@@ -8,8 +8,13 @@ class Medicamento:
     def verDosis(self):
         return self.__dosis 
     
-    def asignarNombre(self,med):
-        self.__nombre = med 
+    def asignarNombre(self,med,lista_med):
+        for i in lista_med:
+            if i == med:
+                return True
+            else:
+                self.__nombre=med
+                return False 
     def asignarDosis(self,med):
         self.__dosis = med 
         
@@ -37,7 +42,7 @@ class Mascota:
         return self.__lista_medicamentos 
             
     def asignarNombre(self,n):
-        self.__nombre=n
+        self.__nombre = n
     def asignarHistoria(self,nh):
         self.__historia=nh
     def asignarTipo(self,t):
@@ -65,11 +70,15 @@ class sistemaV:
         return len(self.__lista_mascotas) 
     
     def ingresarMascota(self,mascota):
-        if mascota in self.__lista_felinos:
-            self.__lista_felinos[mascota.verHistoria()] = mascota
-        elif mascota in self.__lista_caninos:
-            self.__lista_caninos[mascota.verHistoria()] = mascota
-
+        for i in self.__lista_felinos or self.__lista_caninos:
+            if i.verHistoria == mascota.verHistoria():
+                return True
+            elif i.verHistoria != mascota.verHistoria:
+                if mascota.verTipo == 'felino':
+                    self.__lista_felinos[mascota.verHistoria()] = mascota
+                elif mascota.verTipo == "canino":
+                    self.__lista_caninos[mascota.verHistoria()] = mascota
+        return False
     def verFechaIngreso(self,historia):
         #busco la mascota y devuelvo el atributo solicitado
         for masc in self.__lista_felinos or self.__lista_caninos:
@@ -93,16 +102,11 @@ class sistemaV:
                 self.__lista_caninos.pop(historia)  #opcion con el pop
                 return True  #eliminado con exito
         return False 
-
-    def verificarMedicamento(self,medicamento):
-        m = Mascota
-        for masc in m.verLista_Medicamentos():
-            if medicamento == masc:
-                return True
-        return False
     
 def main():
     servicio_hospitalario = sistemaV()
+    mas= Mascota()
+    medicamento = Medicamento()
     # sistma=sistemaV()
     while True:
         menu=int(input('''\nIngrese una opción: 
@@ -120,26 +124,38 @@ def main():
             historia=int(input("Ingrese la historia clínica de la mascota: "))
             #   verificacion=servicio_hospitalario.verDatosPaciente(historia)
             if servicio_hospitalario.verificarExiste(historia) == False:
+                mas.asignarHistoria(historia)
                 nombre=input("Ingrese el nombre de la mascota: ")
-                tipo=input("Ingrese el tipo de mascota (felino o canino): ")
+                mas.asignarNombre(nombre)
+                while True:
+                    tipo=input("Ingrese el tipo de mascota (felino o canino): ")
+                
+                    if tipo == "felino":
+                        mas.asignarTipo(tipo)
+                        break
+                    elif tipo == 'canino':
+                        mas.asignarTipo(tipo)
+                        break
+                    else:
+                        print('tipo de mascota no valido')
+                        continue
+
                 peso=int(input("Ingrese el peso de la mascota: "))
                 fecha=input("Ingrese la fecha de ingreso (dia/mes/año): ")
                 nm=int(input("Ingrese cantidad de medicamentos: "))
-                lista_med=[]
+                lista_med = []
 
                 for i in range(0,nm):
                     nombre_medicamentos = input("Ingrese el nombre del medicamento: ")
+                    medicamento.asignarNombre(nombre_medicamentos,lista_med)
+                    if medicamento.asignarNombre(nombre_medicamentos,lista_med) == True:
+                        print('el medicamento ya esta asignado')
+                        continue
                     dosis =int(input("Ingrese la dosis: "))
-                    medicamento = Medicamento()
-                    medicamento.asignarNombre(nombre_medicamentos)
                     medicamento.asignarDosis(dosis)
                     lista_med.append(medicamento)
 
-                mas= Mascota()
-                mas.asignarNombre(nombre)
-                mas.asignarHistoria(historia)
                 mas.asignarPeso(peso)
-                mas.asignarTipo(tipo)
                 mas.asignarFecha(fecha)
                 mas.asignarLista_Medicamentos(lista_med)
                 servicio_hospitalario.ingresarMascota(mas)
