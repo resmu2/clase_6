@@ -51,10 +51,11 @@ class Mascota:
     
 class sistemaV:
     def __init__(self):
-        self.__lista_mascotas = []
+        self.__lista_felinos = {}
+        self.__lista_caninos = {}
     
     def verificarExiste(self,historia):
-        for m in self.__lista_mascotas:
+        for m in self.__lista_felinos or self.__lista_caninos:
             if historia == m.verHistoria():
                 return True
         #solo luego de haber recorrido todo el ciclo se retorna False
@@ -64,27 +65,32 @@ class sistemaV:
         return len(self.__lista_mascotas) 
     
     def ingresarMascota(self,mascota):
-        self.__lista_mascotas.append(mascota) 
-   
+        if mascota in self.__lista_felinos:
+            self.__lista_felinos[mascota.verHistoria()] = mascota
+        elif mascota in self.__lista_caninos:
+            self.__lista_caninos[mascota.verHistoria()] = mascota
 
     def verFechaIngreso(self,historia):
         #busco la mascota y devuelvo el atributo solicitado
-        for masc in self.__lista_mascotas:
+        for masc in self.__lista_felinos or self.__lista_caninos:
             if historia == masc.verHistoria():
                 return masc.verFecha() 
         return None
 
     def verMedicamento(self,historia):
         #busco la mascota y devuelvo el atributo solicitado
-        for masc in self.__lista_mascotas:
+        for masc in self.__lista_felinos or self.__lista_caninos:
             if historia == masc.verHistoria():
                 return masc.verLista_Medicamentos() 
         return None
     
     def eliminarMascota(self, historia):
-        for masc in self.__lista_mascotas:
-            if historia == masc.verHistoria():
-                self.__lista_mascotas.remove(masc)  #opcion con el pop
+        for masc in self.__lista_felinos or self.__lista_caninos:
+            if historia == masc.verHistoria() and masc in self.__lista_felinos:
+                self.__lista_felinos.pop(historia)  #opcion con el pop
+                return True  #eliminado con exito
+            elif historia == masc.verHistoria() and masc in self.__lista_caninos:
+                self.__lista_caninos.pop(historia)  #opcion con el pop
                 return True  #eliminado con exito
         return False 
 
@@ -123,7 +129,6 @@ def main():
 
                 for i in range(0,nm):
                     nombre_medicamentos = input("Ingrese el nombre del medicamento: ")
-                    sistemaV.verMedicamento(nombre_medicamentos)
                     dosis =int(input("Ingrese la dosis: "))
                     medicamento = Medicamento()
                     medicamento.asignarNombre(nombre_medicamentos)
